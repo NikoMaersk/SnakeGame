@@ -81,8 +81,6 @@ public class HelloApplication extends Application
                         stop();
                     }
 
-
-
                     // Checks collision with food
                     if (snake.checkFoodCollision(food))
                     {
