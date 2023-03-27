@@ -6,29 +6,21 @@ import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Stop;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.io.IOException;
 
 public class HelloApplication extends Application
 {
     private IntegerProperty score = new SimpleIntegerProperty(0);
-    private IntegerProperty size = new SimpleIntegerProperty(1);
     @Override
     public void start(Stage stage) throws IOException
     {
@@ -67,7 +59,7 @@ public class HelloApplication extends Application
 
         // Draws the snake
         GraphicsContext foregroundGc = foreground.getGraphicsContext2D();
-        Snake snake = new Snake(gameBoard.getTileSize(), gameBoard.getTileSize(), Direction.RIGHT, gameBoard);
+        Snake snake = new Snake(gameBoard.getTileSize(), gameBoard.getTileSize(), gameBoard.getTileSize(), Direction.RIGHT);
         snake.draw(foregroundGc);
 
         Food food = new Food(0, 0, gameBoard.getTileSize());
@@ -83,10 +75,13 @@ public class HelloApplication extends Application
                 if (now - lastUpdate >= 100_000_000)
                 {
                     // Checks collision with wall
-                    if (snake.checkWallCollision() || snake.checkSnakeCollision())
+
+                    if (snake.checkWallCollision(gameBoard.getBoardWidth(), gameBoard.getBoardHeight()) || snake.checkSnakeCollision())
                     {
                         stop();
                     }
+
+
 
                     // Checks collision with food
                     if (snake.checkFoodCollision(food))
@@ -99,7 +94,7 @@ public class HelloApplication extends Application
                     }
 
                     // Draws and moves the snake
-                    snake.remove(foregroundGc);
+                    snake.erase(foregroundGc);
                     snake.move();
                     snake.draw(foregroundGc);
 

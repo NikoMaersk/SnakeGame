@@ -7,16 +7,16 @@ import java.util.ArrayList;
 
 public class Snake
 {
-    ArrayList<SnakeBody> body;
-    GameBoard gb;
-    Direction direction;
+    private ArrayList<SnakeBody> body;
+    private Direction direction;
+    private final int STEP;
 
-    public Snake(int startX, int startY, Direction startDirection, GameBoard gb)
+    public Snake(int startX, int startY, int step, Direction startDirection)
     {
         body = new ArrayList<>();
         body.add(new SnakeBody(startX, startY));
         direction = startDirection;
-        this.gb = gb;
+        this.STEP = step;
     }
 
     public void move()
@@ -25,16 +25,16 @@ public class Snake
         switch (direction)
         {
             case UP:
-                dy = -1;
+                dy = -STEP;
                 break;
             case DOWN:
-                dy = 1;
+                dy = STEP;
                 break;
             case LEFT:
-                dx = -1;
+                dx = -STEP;
                 break;
             case RIGHT:
-                dx = 1;
+                dx = STEP;
                 break;
         }
 
@@ -64,48 +64,44 @@ public class Snake
         gc.setFill(Color.BLUE);
         for (SnakeBody segment : body)
         {
-            gc.fillOval(segment.getX() * gb.getTileSize(), segment.getY() * gb.getTileSize(), gb.getTileSize(), gb.getTileSize());
+            gc.fillOval(segment.getX(), segment.getY(), STEP, STEP);
         }
     }
 
-    public void remove(GraphicsContext gc)
+    public void erase(GraphicsContext gc)
     {
         for (SnakeBody segment : body)
         {
-            gc.clearRect(segment.getX() * gb.getTileSize(), segment.getY() * gb.getTileSize(), gb.getTileSize(), gb.getTileSize());
+            gc.clearRect(segment.getX(), segment.getY(), STEP, STEP);
         }
     }
 
-    public boolean checkWallCollision()
+    public boolean checkWallCollision(int width, int height)
     {
-        double headX = body.get(0).getX() * gb.getTileSize();
-        double headY = body.get(0).getY() * gb.getTileSize();
+        double headX = body.get(0).getX();
+        double headY = body.get(0).getY();
 
-        return headX < 0 || headX > (gb.getBoardWidth() - gb.getTileSize()) || headY < 0 || headY > (gb.getBoardHeight() - gb.getTileSize());
+        return headX < 0 || headX > width || headY < 0 || headY > height;
     }
 
     public boolean checkFoodCollision(Food food)
     {
-        double headX = body.get(0).getX() * gb.getTileSize();
-        double headY = body.get(0).getY() * gb.getTileSize();
+        double headX = body.get(0).getX();
+        double headY = body.get(0).getY();
 
-        if (headX == food.getX() && headY == food.getY())
-        {
-            return true;
-        }
-        return false;
+        return headX == food.getX() && headY == food.getY();
     }
 
     public boolean checkSnakeCollision()
     {
         if (body.size() > 1)
         {
-            double headX = body.get(0).getX() * gb.getTileSize();
-            double headY = body.get(0).getY() * gb.getTileSize();
+            double headX = body.get(0).getX();
+            double headY = body.get(0).getY();
 
             for (int i = 1; i < body.size() - 1; i++)
             {
-                if (headX == body.get(i).getX() * gb.getTileSize() && headY == body.get(i).getY() * gb.getTileSize())
+                if (headX == body.get(i).getX() && headY == body.get(i).getY())
                 {
                     return true;
                 }
