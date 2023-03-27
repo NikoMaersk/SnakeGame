@@ -13,6 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -65,35 +66,13 @@ public class HelloApplication extends Application
         gameBoard.drawBoard(backgroundGc);
 
         // Draws the snake
-        GraphicsContext snakeGraphicsContext = foreground.getGraphicsContext2D();
+        GraphicsContext foregroundGc = foreground.getGraphicsContext2D();
         Snake snake = new Snake(gameBoard.getTileSize(), gameBoard.getTileSize(), Direction.RIGHT, gameBoard);
-        snake.draw(snakeGraphicsContext);
+        snake.draw(foregroundGc);
 
         Food food = new Food(0, 0, gameBoard.getTileSize());
         food.randomizePosition(gameBoard);
-        food.draw(snakeGraphicsContext);
-
-/*
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(100), event ->
-        {
-            snake.remove(snakeGraphicsContext, gameBoard);
-            snake.move();
-            gameBoard.drawBoard(backGroundGc);
-            snake.draw(snakeGraphicsContext, gameBoard);
-
-            if (Math.random() < 0.1)
-            {
-                snake.grow();
-                score.set(score.get() + 1);
-            }
-        }));
-        timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.play();
-
- */
-
-
-
+        food.draw(foregroundGc);
 
         new AnimationTimer()
         {
@@ -103,26 +82,26 @@ public class HelloApplication extends Application
             {
                 if (now - lastUpdate >= 100_000_000)
                 {
-                    if (snake.checkWallCollision())
+                    // Checks collision with wall
+                    if (snake.checkWallCollision() || snake.checkSnakeCollision())
                     {
                         stop();
                     }
 
-                    System.out.println(food.getX());
-                    System.out.println(snake.getBody().get(0).getX() * gameBoard.getTileSize());
+                    // Checks collision with food
                     if (snake.checkFoodCollision(food))
                     {
                         snake.grow();
                         score.set(score.get() + 1);
-                        food.erase(snakeGraphicsContext);
+                        food.erase(foregroundGc);
                         food.randomizePosition(gameBoard);
-                        food.draw(snakeGraphicsContext);
+                        food.draw(foregroundGc);
                     }
 
-                    snake.remove(snakeGraphicsContext);
+                    // Draws and moves the snake
+                    snake.remove(foregroundGc);
                     snake.move();
-                    gameBoard.drawBoard(backgroundGc);
-                    snake.draw(snakeGraphicsContext);
+                    snake.draw(foregroundGc);
 
                     lastUpdate = now;
                 }

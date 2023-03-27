@@ -101,6 +101,25 @@ public class Snake
         return false;
     }
 
+    public boolean checkSnakeCollision()
+    {
+        if (body.size() > 1)
+        {
+            double headX = body.get(0).getX() * gb.getTileSize();
+            double headY = body.get(0).getY() * gb.getTileSize();
+
+            for (int i = 1; i < body.size() - 1; i++)
+            {
+                if (headX == body.get(i).getX() * gb.getTileSize() && headY == body.get(i).getY() * gb.getTileSize())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     //region Getter/setter
     public Direction getDirection()
     {
